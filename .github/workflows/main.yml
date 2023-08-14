@@ -1,0 +1,106 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Run Tests
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on PR to the master/main branch. 
+  # It is advised to work on a feature branch and not the master/main branch.
+  pull_request:
+    branches: ["main"]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains two jobs: 1. To open project file 2. To run test vis
+
+  open-project-file:
+    # Set the self hosted runner
+    runs-on: self-hosted
+
+    steps:
+      # Checkout the repository to the runner
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+
+      - name: Open Project file
+        run: |
+          $starting_directory = "${{ github.workspace }}\src"
+
+          # Function to find .lvproj files
+          function Find-lvprojFiles {
+              param (
+                  [string]$directory
+              )
+
+              $lvprojFiles = Get-ChildItem -Path $directory -Recurse -Filter *.lvproj -File
+
+              foreach ($lvprojFile in $lvprojFiles) {
+                  Write-Host ("Found .lvproj file: " + $lvprojFile.FullName)
+                  LabVIEWCLI -OperationName RunVI -VIPath "${{ github.workspace }}\src\Project file\OpenProject.vi" $lvprojFile.FullName
+              }
+          }
+
+          # Calling Find-lvprojFiles function with input parameter starting_directory
+          Find-lvprojFiles $starting_directory
+      
+  
+  test-vi:
+    # Set the self hosted runner
+    runs-on: self-hosted
+    needs: open-project-file
+
+    steps:
+      # Checkout the repository to the runner
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run Test Cases
+        run: |
+          $errorIn = "false"
+          function Find-ViFiles {
+              param (
+                  [string]$path
+              )
+
+              Get-ChildItem $path -Recurse | ForEach-Object {
+                  if ($_.PSIsContainer) {
+                      Find-ViFiles $_.FullName
+                  }
+                  elseif ($_.Extension -eq ".vi") {
+                      $isFileExist = $true
+                      Write-Output ("`n`nFound .vi file: " + $_.FullName)
+                      Write-Output ("Running unit test file " + $_.FullName)
+                      $output = g-cli --lv-ver 2020 $_.FullName
+                      Write-Output ("$output")
+                      if ($output -ne $null) {
+                        $errorIn = "true"
+                      }
+                  }
+              }
+              if ($errorIn -eq "true") {
+                Write-Output "Error Exist..."
+                Exit 1
+              }
+          }
+
+          # The starting directory for iteration
+          $starting_directory = "Tests"
+
+
+          $isFileExist = $false
+          Find-ViFiles $starting_directory
+
+
+          if ($isFileExist -eq $false) {
+              Write-Output "No test files found"
+          }
+
+          Write-Output $isFileExist
+
+
+
+

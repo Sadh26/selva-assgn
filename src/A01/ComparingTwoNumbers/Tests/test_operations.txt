@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites framework-name="Caraya" framework-version="1.4.2.144">
+<testsuite name="Test Operations" errors="0" skipped="0" tests="12" failures="0" timestamp="2023-08-11T17:34:50.058+06:00">
+    <testcase classname="Test Operations" name="Assert A=10  B =0  , A&gt;B , 1"/>
+    <testcase classname="Test Operations" name="Assert A=10  B =0  , A&gt;B , 1"/>
+    <testcase classname="Test Operations" name="Assert A=18  B =10  , A&lt;B , 0"/>
+    <testcase classname="Test Operations" name="Assert A=18  B =10  , A&lt;B , 0"/>
+    <testcase classname="Test Operations" name="Assert A=10  B =10  , A&lt;=B , 1"/>
+    <testcase classname="Test Operations" name="Assert A=10  B =10  , A&lt;=B , 1"/>
+    <testcase classname="Test Operations" name="Assert A=9  B =10  , A&gt;=B , 0"/>
+    <testcase classname="Test Operations" name="Assert A=9  B =10  , A&gt;=B , 0"/>
+    <testcase classname="Test Operations" name="Assert A=10  B =10  , A=B , 1"/>
+    <testcase classname="Test Operations" name="Assert A=10  B =10  , A=B , 1"/>
+    <testcase classname="Test Operations" name="Assert A=10  B =10  , A!=B , 1"/>
+    <testcase classname="Test Operations" name="Assert A=10  B =10  , A!=B , 1"/>
+</testsuite>
+</testsuites>
