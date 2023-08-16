@@ -1,11 +1,8 @@
-# This is a basic workflow to help you get started with Actions
-
 name: Run Tests
 
 # Controls when the workflow will run
 on:
   # Triggers the workflow on PR to the master/main branch. 
-  push:
   # It is advised to work on a feature branch and not the master/main branch.
   pull_request:
     branches: ["main"]
@@ -15,9 +12,9 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains two jobs: 1. To open project file 2. To run test vis
+  # This workflow contains one job: It opens the project file and runs the test vis from Tests folder.
 
-  open-project-file:
+  run-tests:
     # Set the self hosted runner
     runs-on: self-hosted
 
@@ -27,8 +24,9 @@ jobs:
         uses: actions/checkout@v2
 
 
-      - name: Open Project file
+      - name: Run Tests
         run: |
+        
           $starting_directory = "${{ github.workspace }}\src"
           $errorIn = "false"
           $isFileExist = $false
@@ -36,6 +34,8 @@ jobs:
           # The starting directory for iteration
           $test_directory = "Tests"
 
+
+          # Function to find test vi files
           function Find-ViFiles {
               param (
                   [string]$path
@@ -89,42 +89,15 @@ jobs:
                   }
               }
               if ($errorIn -eq "true") {
-              Write-Output "Error Exist..."
-              Exit 1
+                Write-Output "Error Exist..."
+                Exit 1
               }
           }
-
 
 
           # Calling Find-lvprojFiles function with input parameter starting_directory
           Find-lvprojFiles $starting_directory
       
-  
-  # test-vi:
-  #   # Set the self hosted runner
-  #   runs-on: self-hosted
-  #   needs: open-project-file
-
-  #   steps:
-  #     # Checkout the repository to the runner
-  #     - name: Checkout code
-  #       uses: actions/checkout@v2
-
-  #     - name: Run Test Cases
-  #       run: |
-
-
-
-          
-          
-
-
-  #         if ($isFileExist -eq $false) {
-  #             Write-Output "No test files found"
-  #         }
-
-  #         Write-Output $isFileExist
-
 
 
 
