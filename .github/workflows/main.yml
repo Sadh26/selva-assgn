@@ -59,6 +59,12 @@ jobs:
               if ($isFileExist -eq $false) {
                 Write-Output "No test files found"
               }
+              if ($errorIn -eq "true") {
+                return $true
+              }
+              else {
+                return $false
+              }
           } 
 
           # Function to find .lvproj files
@@ -75,16 +81,16 @@ jobs:
                   $folder_name = "$(Split-Path $lvprojFile.FullName -Parent)\$test_directory"
                   if (Test-Path -Path $folder_name -PathType Container)
                   {
-                    Find-ViFiles "$folder_name"
+                    $errorIn = Find-ViFiles "$folder_name"
+                    if ($errorIn -eq "true") {
+                      Write-Output "Error Exist..."
+                      Exit 1
+                    }
                   }
                   else 
                   {
                     Write-Output "No test folder found"
                   }
-              }
-              if ($errorIn -eq "true") {
-                Write-Output "Error Exist..."
-                Exit 1
               }
           }
 
