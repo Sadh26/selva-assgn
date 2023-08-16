@@ -53,9 +53,9 @@ jobs:
                       if ($output -ne $null) {
                         $errorIn = "true"
                       }
-                  }
-                  else {
-                    Write-Output "No test files found"
+                      if ($isFileExist -eq $false) {
+                        Write-Output "No test files found"
+                      }
                   }
               }
               if ($errorIn -eq "true") {
