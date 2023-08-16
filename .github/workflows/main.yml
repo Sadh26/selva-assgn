@@ -29,38 +29,12 @@ jobs:
       - name: Open Project file
         run: |
           $starting_directory = "${{ github.workspace }}\src"
-
-          # Function to find .lvproj files
-          function Find-lvprojFiles {
-              param (
-                  [string]$directory
-              )
-
-              $lvprojFiles = Get-ChildItem -Path $directory -Recurse -Filter *.lvproj -File
-
-              foreach ($lvprojFile in $lvprojFiles) {
-                  Write-Host ("Found .lvproj file: " + $lvprojFile.FullName)
-                  LabVIEWCLI -OperationName RunVI -VIPath "${{ github.workspace }}\src\Project file\OpenProject.vi" $lvprojFile.FullName
-              }
-          }
-
-          # Calling Find-lvprojFiles function with input parameter starting_directory
-          Find-lvprojFiles $starting_directory
-      
-  
-  test-vi:
-    # Set the self hosted runner
-    runs-on: self-hosted
-    needs: open-project-file
-
-    steps:
-      # Checkout the repository to the runner
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Run Test Cases
-        run: |
           $errorIn = "false"
+          $isFileExist = $false
+
+          # The starting directory for iteration
+          $test_directory = "Tests"
+
           function Find-ViFiles {
               param (
                   [string]$path
@@ -85,21 +59,54 @@ jobs:
                 Write-Output "Error Exist..."
                 Exit 1
               }
+          } 
+
+          # Function to find .lvproj files
+          function Find-lvprojFiles {
+              param (
+                  [string]$directory
+              )
+
+              $lvprojFiles = Get-ChildItem -Path $directory -Recurse -Filter *.lvproj -File
+
+              foreach ($lvprojFile in $lvprojFiles) {
+                  Write-Host ("Found .lvproj file: " + $lvprojFile.FullName)
+                  LabVIEWCLI -OperationName RunVI -VIPath "${{ github.workspace }}\src\Project file\OpenProject.vi" $lvprojFile.FullName
+                  $folder_name = Split-Path $lvprojFile.FullName -Parent
+                  Find-ViFiles "$folder_name\$test_directory"
+              }
           }
 
-          # The starting directory for iteration
-          $starting_directory = "Tests"
 
 
-          $isFileExist = $false
-          Find-ViFiles $starting_directory
+          # Calling Find-lvprojFiles function with input parameter starting_directory
+          Find-lvprojFiles $starting_directory
+      
+  
+  # test-vi:
+  #   # Set the self hosted runner
+  #   runs-on: self-hosted
+  #   needs: open-project-file
+
+  #   steps:
+  #     # Checkout the repository to the runner
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
+
+  #     - name: Run Test Cases
+  #       run: |
 
 
-          if ($isFileExist -eq $false) {
-              Write-Output "No test files found"
-          }
 
-          Write-Output $isFileExist
+          
+          
+
+
+  #         if ($isFileExist -eq $false) {
+  #             Write-Output "No test files found"
+  #         }
+
+  #         Write-Output $isFileExist
 
 
 
