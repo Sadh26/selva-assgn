@@ -54,6 +54,9 @@ jobs:
                         $errorIn = "true"
                       }
                   }
+                  else {
+                    Write-Output "No test files found"
+                  }
               }
               if ($errorIn -eq "true") {
                 Write-Output "Error Exist..."
