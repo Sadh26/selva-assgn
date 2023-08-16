@@ -82,15 +82,15 @@ jobs:
                   if (Test-Path -Path $folder_name -PathType Container)
                   {
                     $errorIn = Find-ViFiles "$folder_name"
-                    if ($errorIn -eq "true") {
-                      Write-Output "Error Exist..."
-                      Exit 1
-                    }
                   }
                   else 
                   {
                     Write-Output "No test folder found"
                   }
+              }
+              if ($errorIn -eq "true") {
+              Write-Output "Error Exist..."
+              Exit 1
               }
           }
 
